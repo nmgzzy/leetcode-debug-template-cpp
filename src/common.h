@@ -1,4 +1,4 @@
-// # 商业转载请联系作者获得授权，非商业转载请注明出处。
+﻿// # 商业转载请联系作者获得授权，非商业转载请注明出处。
 // # For commercial use, please contact the author for authorization. For non-commercial use, please indicate the source.
 // # 协议(License)：署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0)
 // # 作者(Author)：songjiahao
@@ -127,6 +127,10 @@ using namespace std;
 
 void PrintVector(vector<int> nums);           // 可以用于调用打印一维整形数组
 void PrintMatrix(vector<vector<int>> matrix); // 可以用于打印二维整形数组
+vector<int> VectorFromString(const string &input);
+string VectorToString(vector<int> vec);
+vector<vector<int>> MatrixFromString(const string &input);
+string MatrixToString(vector<vector<int>> mat);
 
 // 链表定义
 struct ListNode
@@ -189,6 +193,115 @@ void PrintMatrix(vector<vector<int>> matrix)
         }
         putchar('\n');
     }
+}
+
+inline bool not_in(char a, const string &delims)
+{
+    for (int i = 0; i < delims.size(); i++)
+    {
+        if (a == delims[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+string StringRemove(const string &src, const string &delims)
+{
+    char *temp = (char *)alloca(src.size() + 1);
+    int j = 0;
+    vector<int> ret;
+    for (int i = 0; i < src.size(); i++)
+    {
+        if (not_in(src[i], delims))
+        {
+            temp[j++] = src[i];
+        }
+    }
+    temp[j] = 0;
+    return string(temp);
+}
+
+std::vector<std::string_view> splitSV(std::string_view strv, std::string_view delims)
+{
+    std::vector<std::string_view> output;
+    size_t first = 0;
+
+    while (first < strv.size())
+    {
+        const auto second = strv.find(delims, first);
+        if (first != second)
+            output.emplace_back(strv.substr(first, second - first));
+        if (second == std::string_view::npos)
+            break;
+        first = second + 1;
+    }
+    return output;
+}
+
+vector<int> VectorFromString(const string &input)
+{
+    vector<int> ret;
+    string temp = StringRemove(input, " []\t\r\n");
+    vector<string_view> num_list = splitSV(temp, ",");
+    for (int i = 0; i < num_list.size(); i++)
+        ret.emplace_back(atoi(string(num_list[i]).c_str()));
+    return ret;
+}
+
+string VectorToString(vector<int> vec)
+{
+    stringstream ss;
+    ss << "[";
+    for (int i = 0; i < vec.size(); i++)
+    {
+        ss << vec[i];
+        if (i != vec.size() - 1)
+            ss << ",";
+    }
+    ss << "]";
+    return ss.str();
+}
+
+vector<vector<int>> MatrixFromString(const string &input)
+{
+    vector<vector<int>> ret;
+    string temp = StringRemove(input, " \t\r\n");
+    vector<string_view> nums_list = splitSV(temp, "],[");
+    for (int i = 0; i < nums_list.size(); i++)
+    {
+        string row = StringRemove(string(nums_list[i]), "[]");
+        vector<string_view> nums = splitSV(row, ",");
+        vector<int> nums_vec;
+        for (int j = 0; j < nums.size(); j++)
+        {
+            nums_vec.emplace_back(atoi(string(nums[j]).c_str()));
+        }
+        ret.emplace_back(nums_vec);
+    }
+    return ret;
+}
+
+string MatrixToString(vector<vector<int>> mat)
+{
+    stringstream ss;
+    ss << "[";
+    for (int i = 0; i < mat.size(); i++)
+    {
+        ss << "[";
+        for (int j = 0; j < mat[i].size(); j++)
+        {
+            ss << mat[i][j];
+            if (j != mat[i].size() - 1)
+                ss << ",";
+        }
+        ss << "]";
+        if (i != mat.size() - 1)
+            ss << ",";
+    }
+    ss << "]";
+    return ss.str();
 }
 
 // 插入链表,头插,无头结点
