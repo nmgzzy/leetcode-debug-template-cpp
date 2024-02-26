@@ -9,7 +9,9 @@ public:
     // todo
 };
 
-TEST(sum, testSum)
+Solution s;
+
+TEST(case1, test1)
 {
     // EXPECT_EQ(5, sum(2, 3)); // 求合2+3=5
     // EXPECT_NE(3, sum(3, 4)); // 求合3+4 != 3

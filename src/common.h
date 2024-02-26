@@ -125,12 +125,12 @@
 
 using namespace std;
 
-void PrintVector(vector<int> nums);           // 可以用于调用打印一维整形数组
-void PrintMatrix(vector<vector<int>> matrix); // 可以用于打印二维整形数组
+void PrintVector(const vector<int> &nums);           // 可以用于调用打印一维整形数组
+void PrintMatrix(const vector<vector<int>> &matrix); // 可以用于打印二维整形数组
 vector<int> VectorFromString(const string &input);
-string VectorToString(vector<int> vec);
+string VectorToString(const vector<int> &vec);
 vector<vector<int>> MatrixFromString(const string &input);
-string MatrixToString(vector<vector<int>> mat);
+string MatrixToString(const vector<vector<int>> &mat);
 
 // 链表定义
 struct ListNode
@@ -164,7 +164,7 @@ void PrintTreeMatrix(vector<vector<int>> &matrix); // 用于打印树形结构�
 void PrintTree(TreeNode *root);                    // 打印树的函数、
 
 #ifdef _IMPLEMENTATION_
-void PrintVector(vector<int> nums)
+void PrintVector(const vector<int> &nums)
 {
     int size = nums.size();
     for (int i = 0; i < size; i++)
@@ -177,7 +177,7 @@ void PrintVector(vector<int> nums)
     return;
 }
 
-void PrintMatrix(vector<vector<int>> matrix)
+void PrintMatrix(const vector<vector<int>> &matrix)
 {
     int row = 0, col = 0;
     row = matrix.size();
@@ -246,17 +246,26 @@ vector<int> VectorFromString(const string &input)
     string temp = StringRemove(input, " []\t\r\n");
     vector<string_view> num_list = splitSV(temp, ",");
     for (int i = 0; i < num_list.size(); i++)
-        ret.emplace_back(atoi(string(num_list[i]).c_str()));
+    {
+        string temp1 = StringRemove(string(num_list[i]), ",");
+        if (temp1 == string("null"))
+            ret.emplace_back(null);
+        else
+            ret.emplace_back(atoi(string(temp1).c_str()));
+    }
     return ret;
 }
 
-string VectorToString(vector<int> vec)
+string VectorToString(const vector<int> &vec)
 {
     stringstream ss;
     ss << "[";
     for (int i = 0; i < vec.size(); i++)
     {
-        ss << vec[i];
+        if (vec[i] == null)
+            ss << "null";
+        else
+            ss << vec[i];
         if (i != vec.size() - 1)
             ss << ",";
     }
@@ -283,7 +292,7 @@ vector<vector<int>> MatrixFromString(const string &input)
     return ret;
 }
 
-string MatrixToString(vector<vector<int>> mat)
+string MatrixToString(const vector<vector<int>> &mat)
 {
     stringstream ss;
     ss << "[";
@@ -417,7 +426,7 @@ void PrintTreeMatrix(vector<vector<int>> &matrix)
 { // 打印填充了树形结构的二维数组
     int row = 0, col = 0;
     row = matrix.size();
-    string flag = string(3, ' '); // 空白位置使用3个空格占用
+    string flag(3, ' '); // 空白位置使用3个空格占用
     if (row)
         col = matrix[0].size();
     for (int i = 0; i < row; i++)
